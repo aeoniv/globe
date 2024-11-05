@@ -1,7 +1,7 @@
 <head>
   <style> body { margin: 0; } </style>
 
-  <script src="//unpkg.com/globe.gl"></script>
+  <script src="https://unpkg.com/globe.gl"></script>
   <!--<script src="../../dist/globe.gl.js"></script>-->
 </head>
 
@@ -9,41 +9,56 @@
   <div id="globeViz"></div>
 
   <script>
-    // Gen random paths
-    const N_PATHS = 10;
-    const MAX_POINTS_PER_LINE = 10000;
-    const MAX_STEP_DEG = 1;
-    const MAX_STEP_ALT = 0.015;
-    const gData = [...Array(N_PATHS).keys()].map(() => {
-      let lat = (Math.random() - 0.5) * 90;
-      let lng = (Math.random() - 0.5) * 360;
-      let alt = 0;
+    // Load country data for hex polygons
+    //fetch('https://unpkg.com/ne_110m_admin_0_countries.geojson')
+    fetch('./ne_110m_admin_0_countries.geojson')
+      .then(res => res.json())
+      .then(countries => {
+        // Load student data from Airtable
+        const airtableUrl = 'https://airtable.com/appYqW8iuBgLtGOP2/shrE2LJ53HcVtEY61'; // Replace with your base ID and table name
+        const personalAccessToken = 'patwqtFzx3a78vT6V.66fcfa8f307037aae0957ec9dfca266532922c280cd1d75cdcc33b4668413da5'; // Replace with your Airtable Personal Access Token
 
-      return [[lat, lng, alt], ...[...Array(Math.round(Math.random() * MAX_POINTS_PER_LINE)).keys()].map(() => {
-        lat += (Math.random() * 2 - 1) * MAX_STEP_DEG;
-        lng += (Math.random() * 2 - 1) * MAX_STEP_DEG;
-        alt += (Math.random() * 2 - 1) * MAX_STEP_ALT;
-        alt = Math.max(0, alt);
 
-        return [lat, lng, alt];
-      })];
-    });
+        fetch(airtableUrl, {
+          headers: {
+            Authorization: `Bearer ${personalAccessToken}` // Using Bearer token
+          }
+        })
+          .then(res => res.json())
+          .then(data => {
+            const students = data.records.map(record => ({
+              name: record.fields.Name, // Name of the student
+              city: record.fields.City, // City of the student
+              lat: record.fields.Latitude, // Latitude
+              lng: record.fields.Longitude // Longitude
+            }));
 
-    const globe = Globe()
-      .globeImageUrl('//unpkg.com/three-globe/example/img/earth-dark.jpg')
-      .bumpImageUrl('//unpkg.com/three-globe/example/img/earth-topology.png')
-      .pathsData(gData)
-      .pathColor(() => ['rgba(0,0,255,0.6)', 'rgba(255,0,0,0.6)'])
-      .pathDashLength(0.01)
-      .pathDashGap(0.004)
-      .pathDashAnimateTime(100000)
-      (document.getElementById('globeViz'));
-
-    setTimeout(() => {
-      globe
-        .pathPointAlt(pnt => pnt[2]) // set altitude accessor
-        .pathTransitionDuration(4000)
-    }, 6000);
-
+            // Initialize Globe
+            const world = Globe()
+              .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              .hexPolygonsData(countries.features)
+              .hexPolygonResolution(3)
+              .hexPolygonMargin(0.3)
+              .hexPolygonUseDots(true)
+              .hexPolygonColor(() => `#${Math.round(Math.random() * Math.pow(2, 24)).toString(16).padStart(6, '0')}`)
+              .hexPolygonLabel(({ properties: d }) => `
+                <b>${d.ADMIN} (${d.ISO_A2})</b> <br />
+                Population: <i>${d.POP_EST}</i>
+              `)
+              .pointsData(students)  // Add students' locations as points
+              .pointAltitude(0.02)   // Adjust point height
+              .pointColor(() => '#ff5722')  // Color of each student point
+              .pointRadius(0.15)     // Size of each student point
+              .pointLabel(({ name, city, lat, lng }) => `
+                <b>${name}</b><br />
+                City: <i>${city}</i><br />
+                Latitude: <i>${lat}</i><br />
+                Longitude: <i>${lng}</i>
+              `)  // Label showing student name, city, latitude, and longitude
+              (document.getElementById('globeViz'));
+          })
+          .catch(err => console.error('Error loading students data:', err));
+      })
+      .catch(err => console.error('Error loading countries data:', err));
   </script>
 </body>

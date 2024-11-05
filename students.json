@@ -1,0 +1,6 @@
+[
+    { "lat": 37.7749, "lng": -122.4194, "name": "Alice Smith", "city": "San Francisco" },
+    { "lat": 51.5074, "lng": -0.1278, "name": "John Doe", "city": "London" },
+    { "lat": 35.6895, "lng": 139.6917, "name": "Satoshi Yamamoto", "city": "Tokyo" }
+]
+  
