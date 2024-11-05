@@ -39,6 +39,7 @@
             // Initialize Globe
             const world = Globe({  antialias: true, alpha: true })
               .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              .backgroundColor('rgba(0, 0, 0, 0)') // Set transparent background
               .hexPolygonsData(countries.features)
               .hexPolygonResolution(3)
               .hexPolygonMargin(0.3)
@@ -51,7 +52,7 @@
               .pointsData(students)  // Add students' locations as points
               .pointAltitude(0.02)   // Adjust point height
               .pointColor(() => '#ff5722')  // Color of each student point
-              .pointRadius(0.15)     // Size of each student point
+              .pointRadius(0.2)     // Size of each student point 0.15
               .pointLabel(({ name, city, lat, lng }) => `
                 <b>${name}</b><br />
                 City: <i>${city}</i><br />
