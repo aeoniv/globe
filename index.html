@@ -51,7 +51,8 @@
 
             // Initialize Globe
             const world = Globe({  antialias: true, alpha: true })
-              .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              //.globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              .globeImageUrl('https://raw.githubusercontent.com/aeoniv/globe/main/Screenshot 2024-11-05 235637.jpg')
               .backgroundColor('rgba(0, 0, 0, 0)') // Set transparent background
               .hexPolygonsData(countries.features)
               .hexPolygonResolution(3)
@@ -74,10 +75,8 @@
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
               //world.target.set(1000,1000,1000);
-              world.camera().position.set(0, 0, 0); 
-              world.controls().target.set(0, 0, 0); 
-
-
+              //world.camera().position.set(0, 0, 0); 
+              //world.controls().target.set(0, 0, 0); 
               world.controls().autoRotate = true;
               world.controls().autoRotateSpeed = 0.5; 
           })
