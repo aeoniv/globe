@@ -60,6 +60,9 @@
                 Longitude: <i>${lng}</i>
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
+
+              world.controls().autoRotate = true;
+              world.controls().autoRotateSpeed = 0.5; // Adjust the speed as desired
           })
           .catch(err => console.error('Error loading students data:', err));
       })
