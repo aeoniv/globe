@@ -1,5 +1,18 @@
 <head>
-  <style> body { margin: 0; } </style>
+  <style>
+    body {
+      margin: 0;
+    }
+    #globeViz {
+      width: 100vw;
+      height: 100vh;
+      background-image: url('https://raw.githubusercontent.com/aeoniv/globe/main/temple.png'); /* Path to your image */ 
+
+      background-size: cover;         /* Fills the whole screen */
+      background-repeat: no-repeat;   /* Prevents tiling */
+      background-position: center;    /* Centers the image */
+    }
+  </style>
 
   <script src="https://unpkg.com/globe.gl"></script>
   <!--<script src="../../dist/globe.gl.js"></script>-->
@@ -60,9 +73,13 @@
                 Longitude: <i>${lng}</i>
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
+              //world.target.set(1000,1000,1000);
+              world.camera().position.set(0, 0, 0); 
+              world.controls().target.set(0, 0, 0); 
+
 
               world.controls().autoRotate = true;
-              world.controls().autoRotateSpeed = 0.5; // Adjust the speed as desired
+              world.controls().autoRotateSpeed = 0.5; 
           })
           .catch(err => console.error('Error loading students data:', err));
       })
