@@ -2,15 +2,23 @@
   <style>
     body {
       margin: 0;
+      overflow: hidden;
     }
     #globeViz {
       width: 100vw;
       height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
       background-image: url('https://raw.githubusercontent.com/aeoniv/globe/main/temple.png'); /* Path to your image */ 
 
       background-size: cover;         /* Fills the whole screen */
       background-repeat: no-repeat;   /* Prevents tiling */
       background-position: center;    /* Centers the image */
+    }
+    canvas {
+      transform: translateX(30%); /* Adjust percentage as needed */
     }
   </style>
 
@@ -50,9 +58,9 @@
             }));
 
             // Initialize Globe
-            const world = Globe({  antialias: true, alpha: true })
-              //.globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
-              .globeImageUrl('https://raw.githubusercontent.com/aeoniv/globe/main/Screenshot 2024-11-05 235637.jpg')
+            const world = Globe({}) //{  antialias: true, alpha: true }
+              .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              //.globeImageUrl('https://raw.githubusercontent.com/aeoniv/globe/main/Screenshot 2024-11-05 235637.jpg')
               .backgroundColor('rgba(0, 0, 0, 0)') // Set transparent background
               .hexPolygonsData(countries.features)
               .hexPolygonResolution(3)
@@ -64,7 +72,7 @@
                 Population: <i>${d.POP_EST}</i>
               `)
               .pointsData(students)  // Add students' locations as points
-              .pointAltitude(0.02)   // Adjust point height
+              .pointAltitude(0.15)   // Adjust point height
               .pointColor(() => '#ff5722')  // Color of each student point
               .pointRadius(0.2)     // Size of each student point 0.15
               .pointLabel(({ name, city, lat, lng }) => `
@@ -74,11 +82,13 @@
                 Longitude: <i>${lng}</i>
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
-              //world.target.set(1000,1000,1000);
-              //world.camera().position.set(0, 0, 0); 
-              //world.controls().target.set(0, 0, 0); 
+
+              world.camera().position.set(0, 0, -400); // Adjust the values for left positioning
+              //world.controls().target.set(200, 0, 0); // Center the globe
+              
               world.controls().autoRotate = true;
               world.controls().autoRotateSpeed = 0.5; 
+              
           })
           .catch(err => console.error('Error loading students data:', err));
       })
