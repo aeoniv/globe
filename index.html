@@ -22,12 +22,16 @@
     }
   </style>
 
+
+
   <script src="https://unpkg.com/globe.gl"></script>
   <!--<script src="../../dist/globe.gl.js"></script>-->
 </head>
 
 <body>
   <div id="globeViz"></div>
+<div id="tooltip" style="position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px; border-radius: 3px; display: none; pointer-events: none;"></div>
+
 
   <script>
     // Load country data for hex polygons
@@ -36,8 +40,7 @@
       .then(res => res.json())
       .then(countries => {
         // Load student data from Airtable
-        //const airtableUrl = 'https://airtable.com/appYqW8iuBgLtGOP2/shrE2LJ53HcVtEY61/Table06'; // Replace with your base ID and table name
-        //const airtableUrl = 'https://airtable.com/appYqW8iuBgLtGOP2/shrtGjEj7qpf7yLvxv/Table06';
+
         const airtableUrl = 'https://api.airtable.com/v0/appYqW8iuBgLtGOP2/Table06';
         
         const personalAccessToken = 'patwqtFzx3a78vT6V.66fcfa8f307037aae0957ec9dfca266532922c280cd1d75cdcc33b4668413da5'; // Replace with your Airtable Personal Access Token
@@ -58,9 +61,9 @@
             }));
 
             // Initialize Globe
-            const world = Globe({}) //{  antialias: true, alpha: true }
-              .globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
-              //.globeImageUrl('https://raw.githubusercontent.com/aeoniv/globe/main/Screenshot 2024-11-05 235637.jpg')
+            const world = Globe() //{  antialias: true, alpha: true }
+              //.globeImageUrl('https://unpkg.com/three-globe/example/img/earth-dark.jpg')
+              .globeImageUrl('https://raw.githubusercontent.com/aeoniv/globe/main/blue.png')
               .backgroundColor('rgba(0, 0, 0, 0)') // Set transparent background
               .hexPolygonsData(countries.features)
               .hexPolygonResolution(3)
@@ -83,11 +86,28 @@
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
 
+              // Tooltip handling
+//              const tooltip = document.getElementById('tooltip');
+//              globe.onPointHover(point => {
+//                if (point) {
+//                  tooltip.style.top = `${event.clientY + 5}px`;
+//                  tooltip.style.left = `${event.clientX + 5}px`;
+//                  tooltip.style.display = 'block';
+//                  tooltip.innerHTML = `<b>${point.name}</b><br>${point.city}`;
+//                } else {
+//                  tooltip.style.display = 'none';
+//                }                
+
+//              })
+
               world.camera().position.set(0, 0, -300); // Adjust the values for left positioning
               //world.controls().target.set(200, 0, 0); // Center the globe
               
               world.controls().autoRotate = true;
               world.controls().autoRotateSpeed = 0.5; 
+
+
+
               
           })
           .catch(err => console.error('Error loading students data:', err));
