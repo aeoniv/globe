@@ -18,7 +18,18 @@
       background-position: center;    /* Centers the image */
     }
     canvas {
-      transform: translateX(0%); /* Adjust percentage as needed */
+      
+      z-index: -1; /* Ensure the globe canvas is behind */
+    }
+    #tooltip {
+      position: absolute;
+      background: rgba(255, 0, 0, 0.7);
+      color: rgb(255, 0, 0);
+      padding: 5px;
+      border-radius: 3px;
+      display: none;
+      pointer-events: none;
+      font-size: 0.9em;
     }
   </style>
 
@@ -30,8 +41,8 @@
 
 <body>
   <div id="globeViz"></div>
-<div id="tooltip" style="position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px; border-radius: 3px; display: none; pointer-events: none;"></div>
-
+ <!--<div id="tooltip" style="position: absolute; background: rgba(0,0,0,0.7); color: white; padding: 5px; border-radius: 3px; display: none; pointer-events: none;"></div>-->
+  <div id="tooltip"></div>
 
   <script>
     // Load country data for hex polygons
@@ -75,10 +86,11 @@
                 Population: <i>${d.POP_EST}</i>
               `)
               .pointsData(students)  // Add students' locations as points
-              .pointAltitude(0.15)   // Adjust point height
-              .pointColor(() => '#ff5722')  // Color of each student point
+              .pointAltitude(0.2)   // Adjust point height
+              .pointColor(() => '#ffffff')  // Color of each student point
               .pointRadius(0.2)     // Size of each student point 0.15
               .pointLabel(({ name, city, lat, lng }) => `
+                <div style="background: white; color: red; padding: 5px; border-radius: 3px;">
                 <b>${name}</b><br />
                 City: <i>${city}</i><br />
                 Latitude: <i>${lat}</i><br />
@@ -86,26 +98,45 @@
               `)  // Label showing student name, city, latitude, and longitude
               (document.getElementById('globeViz'));
 
-              // Tooltip handling
-//              const tooltip = document.getElementById('tooltip');
-//              globe.onPointHover(point => {
-//                if (point) {
-//                  tooltip.style.top = `${event.clientY + 5}px`;
-//                  tooltip.style.left = `${event.clientX + 5}px`;
-//                  tooltip.style.display = 'block';
-//                  tooltip.innerHTML = `<b>${point.name}</b><br>${point.city}`;
-//                } else {
-//                  tooltip.style.display = 'none';
-//                }                
 
-//              })
+              const threeScene = globe.scene();
+              threeScene.children.forEach(obj => {
+                if (obj.type === 'Points') {
+                  // Disable depth test for student points
+                  obj.material.depthTest = false;
+                  // Render points on top of other layers
+                  obj.renderOrder = 999;
+                }
+              });
+
+              const tooltip = document.getElementById('tooltip');
+                globe.onPointHover((point, event) => {
+                  if (point) {
+                    tooltip.style.top = `${event.clientY}px`;
+                    tooltip.style.left = `${event.clientX}px`;
+                    tooltip.style.display = 'block';
+                    tooltip.innerHTML = `
+                      <b>${point.name}</b><br />
+                      City: <i>${point.city}</i><br />
+                      Latitude: <i>${point.lat}</i><br />
+                      Longitude: <i>${point.lng}</i>
+                    `;
+                  } else {
+                    tooltip.style.display = 'none';
+                  }
+                });
 
               world.camera().position.set(0, 0, -300); // Adjust the values for left positioning
               //world.controls().target.set(200, 0, 0); // Center the globe
               
-              world.controls().autoRotate = true;
-              world.controls().autoRotateSpeed = 0.5; 
+              // Disable user interactions
+              world.controls().enableZoom = false;
+              world.controls().enableRotate = false;
+              world.controls().enablePan = false;
 
+              // Auto-rotate setup
+              world.controls().autoRotate = true;
+              world.controls().autoRotateSpeed = 0.5;     
 
 
               
